@@ -8,5 +8,3 @@ build/
 *.pkl
 *.h5
 *.pt
-*.joblib
-model-backend/
