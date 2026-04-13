@@ -1,0 +1,75 @@
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(96, 108, 56, 0.2);
+    border-radius: 10px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(96, 108, 56, 0.4);
+  }
+  
+  /* Markdown Styles */
+  .prose-sm {
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+  
+  .prose-sm p {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .prose-sm ul, .prose-sm ol {
+    padding-left: 1.25rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .prose-sm li {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .prose-sm h1, .prose-sm h2, .prose-sm h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+  
+  .prose-sm strong {
+    color: inherit;
+    font-weight: 700;
+  }
+
+  .prose-sm code {
+    background: rgba(0,0,0,0.05);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8em;
+  }
+
+  /* User message prose overrides */
+  .bg-\[\#606C38\] .prose-sm {
+    color: white;
+  }
+  
+  .bg-\[\#606C38\] .prose-sm strong {
+    color: white;
+  }
+
+  /* Animations */
+  @keyframes bounce-subtle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s infinite ease-in-out;
+  }
