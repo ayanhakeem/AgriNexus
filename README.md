@@ -1,77 +1,77 @@
 # AgriNexus 🌾
 
-**Team: Snack Overflow**
+> **Full-Stack AI-Powered Agricultural Platform** — Connecting Farmers Directly with Buyers
 
-AgriNexus is a **full-stack AI-powered agricultural platform** designed to connect farmers directly with buyers.  
-It eliminates middlemen, enables transparent transactions, provides predictive analytics, an AI plant health assistant, and delivers government resources for farmers.
+AgriNexus eliminates middlemen, enables transparent transactions, provides ML-based crop price prediction, an AI plant health assistant, and delivers government resources — all in one platform.
 
 ---
 
 ## 🚀 Tech Stack
 
-- **Frontend:** React.js, Framer Motion, Recharts, Leaflet Maps
-- **Backend:** Node.js (Express.js)
-- **AI Assistant:** Groq API (Llama 3.3 70B + Llama 4 Vision)
-- **Database:** MongoDB (MongoDB Atlas)
-- **Authentication:** Clerk
-- **ML Models:** XGBoost (Python) for crop price prediction
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | React.js, Framer Motion, Recharts, Leaflet (OpenStreetMap) |
+| **Backend** | Node.js, Express.js |
+| **AI Assistant** | Groq API — Llama 3.3 70B (chat) + Llama 4 Vision (image) |
+| **ML Models** | Python, XGBoost (crop price prediction) |
+| **Database** | MongoDB Atlas |
+| **Authentication** | Clerk |
 
 ---
 
-## 📌 Features
+## ✨ Features
 
-### 1. 🛒 Marketplace
-- Farmers can **list crops** with price, location, weight, and variety.
-- Buyers can **browse, search, and filter** crops.
+### 🛒 Marketplace
+- Farmers list crops with price, location, quantity, and variety
+- Buyers browse, search, and filter listings in real time
 
-### 2. 📦 Orders
-- Buyers can **place orders** and track their status.
-- Farmers can **view and manage** incoming orders.
-- Status updates: _pending → confirmed → completed_.
+### 📦 Order Management
+- Buyers place orders; farmers manage them
+- Status flow: `pending → confirmed → completed`
 
-### 3. 📊 Price Analytics & Prediction
-- **XGBoost ML model** trained on **200k+ crop price records**.
-- Predicts **future crop prices** (min, max, modal).
-- Farmers can decide the **best time to sell crops**.
+### 📊 Crop Price Prediction (ML)
+- XGBoost model trained on **200,000+ Karnataka crop price records**
+- Predicts **min, max, and modal price** for any crop
+- Helps farmers choose the optimal selling time
 
-### 4. 🤖 AgriNexus AI Assistant
-- Powered by **Groq API** (ultra-fast Llama 3.3 70B inference).
-- History-aware agricultural chatbot for plant health advice.
-- **Image analysis** using Llama 4 Vision to detect crop diseases.
+### 🤖 AgriNexus AI Assistant
+- Powered by **Groq API** (ultra-fast Llama 3 inference)
+- History-aware chat for agricultural advice
+- **Image analysis** for crop disease detection (Llama 4 Vision)
+- Floating assistant button accessible from any page
 
-### 5. 🗺️ Interactive Farm Map
-- Buyers can view **farmers' crop locations** on an interactive Leaflet map.
-- No Google Maps API key required — uses OpenStreetMap.
+### 🗺️ Interactive Farm Map
+- Farmers' locations displayed on a Leaflet/OpenStreetMap
+- No Google Maps API key required
 
-### 6. 🌿 Government Schemes & Learning Modules
-- Access to **real-time government schemes** (PM-KISAN, PMFBY, etc.).
-- Curated learning resources from **Coursera, FAO, edX, Swayam**.
+### 🌿 Government Schemes
+- PM-KISAN, PMFBY, RKVY, and more
+- Direct "Apply Now" links to official portals
 
-### 7. 🔒 Authentication
-- **Clerk integration** for secure sign-up/sign-in.
-- Role-based access (farmer vs buyer).
+### 📚 Learning Resources
+- Curated courses from Coursera, edX, FAO, YouTube, and Swayam
+- Covers sustainable farming, agribusiness, and precision agriculture
+
+### 🔒 Authentication
+- Clerk-powered secure sign-up/sign-in
+- Role-based access: **Farmer** vs **Buyer**
 
 ---
 
 ## 🧠 ML Models
 
-> ⚠️ ML model files (`.joblib`) are **not included** in this repository due to their large file size.
-
-### Download Models
-The trained XGBoost models are available as **GitHub Release assets**:
-
-👉 **[Download Models from Releases](https://github.com/ayanhakeem/AgriNexus/releases)**
-
-After downloading, place them in the following directory:
+The trained XGBoost models are **included directly in this repository** under `model-backend/models/`:
 
 ```
 model-backend/
 └── models/
-    ├── xgboost_model_min_price.joblib
-    ├── xgboost_model_max_price.joblib
-    ├── xgboost_model_modal_price.joblib
-    └── label_encoders.joblib
+    ├── label_encoders.joblib           (8 KB)
+    ├── xgboost_model_min_price.joblib  (~52 MB)
+    ├── xgboost_model_max_price.joblib  (~50 MB)
+    └── xgboost_model_modal_price.joblib (~50 MB)
 ```
+
+No separate download required — they are cloned with the repo automatically.
 
 ---
 
@@ -91,13 +91,13 @@ cd backend
 npm install
 ```
 
-Create `backend/.env` file:
+Create `backend/.env`:
 
 ```env
 PORT=8080
 MONGO_URI=your_mongo_connection_string
 CLERK_API_KEY=your_clerk_key
-GROK_API_KEY=your_groq_api_key
+GROK_API_KEY=your_groq_api_key_from_console.groq.com
 ```
 
 Start server:
@@ -113,226 +113,61 @@ cd frontend
 npm install
 ```
 
-Create `frontend/.env` file:
+Create `frontend/.env`:
 
 ```env
 VITE_BACKEND_URL=http://localhost:8080
-VITE_CLERK_PUBLISHABLE_KEY=your_clerk_frontend_key
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
 ```
 
-Start React app:
+Start dev server:
 
 ```bash
 npm run dev
 ```
 
-### 4. Model Backend Setup (Optional — for price prediction)
+### 4. Model Backend Setup (Price Prediction)
 
 ```bash
 cd model-backend
 pip install -r requirements.txt
-# Download model files from GitHub Releases first
 node server.js
 ```
 
+> The `.joblib` model files are already in `model-backend/models/` — no download needed.
+
 ---
 
-## 📡 API Endpoints
+## 📡 API Reference
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/farmers/addCrop` | Add crop details |
-| GET | `/api/crops` | Fetch all crops |
-| POST | `/api/orders/create` | Create a new order |
-| POST | `/api/gemini/chat` | AI chatbot (Groq) |
-| POST | `/api/gemini/analyze-image` | AI image analysis |
+| `GET` | `/api/crops` | Fetch all crop listings |
+| `POST` | `/api/farmers/addCrop` | Add a new crop |
+| `POST` | `/api/orders/create` | Place a new order |
+| `PUT` | `/api/orders/:id/status` | Update order status |
+| `POST` | `/api/gemini/chat` | AI chatbot (Groq Llama 3.3) |
+| `POST` | `/api/gemini/analyze-image` | AI crop disease detection |
 
 ---
 
-## 🤝 Contribution
+## 🗄️ Database Schema
+
+- **Farmers** — profile, crops, location
+- **Buyers** — profile, orders
+- **Crops** — name, price, quantity, variety, location
+- **Orders** — buyer, farmer, crop, status
+- **Equipment** — certification requests
+
+---
+
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature-name`)
-3. Commit changes (`git commit -m "Added feature"`)
-4. Push to branch (`git push origin feature-name`)
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit changes: `git commit -m "feat: added your feature"`
+4. Push: `git push origin feature/your-feature`
 5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License**.
-
-## 🚀 Tech Stack
-
-- **Frontend:** React.js, TailwindCSS , Recharts/Chart.js, Google Maps API
-- **Backend:** Node.js (Express.js)
-- **Database:** MongoDB (MongoDB Atlas)
-- **Authentication:** Clerk
-- **Hosting:** Frontend (Netlify/Vercel), Backend (Render/Heroku/AWS), Database (Atlas)
-
----
-
-## 📌 Features
-
-### 1. Marketplace
-
-- Farmers can **list crops** with:
-  - Crop name
-  - Price
-  - Location
-  - Weight/quantity
-  - Variety
-- Buyers can **browse, search, and filter** crops.
-
-### 2. Contact Farmer
-
-- Each farmer profile includes **contact details**.
-- Buyers can directly reach farmers via **email integration**.
-
-### 3. Orders
-
-- Buyers can **place orders** and track their status.
-- Farmers can **view and manage** incoming orders.
-- Status updates: _pending → confirmed → completed_.
-
-### 4. Price Analytics
-
-- **Machine learning model** trained on **200k+ crop price records**.
-- Predicts **future crop prices**.
-- Farmers can decide the **best time to sell crops**.
-
-### 5. Google Maps Integration
-
-- Buyers can view **farmers’ crop locations** on an interactive map.
-- Uses Google Maps API for real-time display.
-
-### 6. Time Series Graph
-
-- Price fluctuations of crops visualized using **time series graphs**.
-- Supports **1 year of historical data** per crop.
-- Powered by Recharts/Chart.js.
-
-### 7. Government Schemes & Learning Modules
-
-- Access to **real-time government schemes**.
-- Peer-reviewed learning modules with tutorials and discussions.
-
-### 8. Equipment Certification
-
-- Farmers can apply for **equipment certification**.
-- Buyers gain **trust in verified equipment**.
-
-### 9. Authentication
-
-- **Clerk integration** for secure sign-up/sign-in.
-- Features:
-  - Email/social login
-  - Role-based access (farmer vs buyer)
-
----
-
-## 🗄️ Database Schema (MongoDB)
-
-- **Users** (farmer/buyer)
-- **Crops** (name, price, location, weight, variety)
-- **Orders** (buyer, farmer, crop, status)
-- **Schemes** (title, description, link)
-- **Certifications** (equipment, status, farmerId)
-
----
-
-## 📡 API Endpoints (Sample)
-
-| Method | Endpoint                 | Description                     |
-| ------ | ------------------------ | ------------------------------- |
-| POST   | `/api/farmers/addCrop`   | Add crop details                |
-| GET    | `/api/crops`             | Fetch all crops                 |
-| GET    | `/api/crops/:id`         | Fetch single crop               |
-| POST   | `/api/orders/create`     | Create a new order              |
-| PUT    | `/api/orders/:id/status` | Update order status             |
-| GET    | `/api/analytics/predict` | Get crop price prediction       |
-| GET    | `/api/schemes`           | Fetch government schemes        |
-| POST   | `/api/equipment/certify` | Request equipment certification |
-
----
-
-## 🔒 Security
-
-- Authentication handled by **Clerk** with JWT tokens.
-- Role-based access for **farmers vs buyers**.
-- MongoDB Atlas secured with environment variables.
-
----
-
-## 🛠️ Installation & Setup
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/VishalBhat07/agriHub.git
-cd agriHub
-```
-
-### 2. Backend Setup
-
-```bash
-cd backend
-npm install
-```
-
-Create `.env` file:
-
-```env
-PORT=8080
-MONGO_URI=your_mongo_connection_string
-CLERK_API_KEY=your_clerk_key
-```
-
-Start server:
-
-```bash
-npm run dev
-```
-
-### 3. Frontend Setup
-
-```bash
-cd frontend
-npm install
-```
-
-Create `.env` file:
-
-```env
-REACT_APP_API_URL=http://localhost:8080
-REACT_APP_CLERK_FRONTEND_API=your_clerk_frontend_api
-```
-
-Start React app:
-
-```bash
-npm start
-```
-
----
-
-## 📊 Future Enhancements
-
-- Real-time chat between farmers & buyers.
-- AI-powered disease detection from crop images.
-- Integration with **payment gateways**.
-- Advanced analytics dashboards for farmers.
-
----
-
-## 🤝 Contribution
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature-name`)
-3. Commit changes (`git commit -m "Added feature"`)
-4. Push to branch (`git push origin feature-name`)
-5. Open a Pull Request..
 
 ---
 
