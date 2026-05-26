@@ -35,10 +35,12 @@ const OrderRow = ({ order, userID, onUpdateStatus }) => {
     }
   };
 
-  // Format crops safely
-  const formatCrops = () => {
-    if (!order.crop) return "No crops";
-    return `${order.crop.name} - ${order.crop.variety}`;
+  // Format items safely
+  const formatItems = () => {
+    if (order.crop) return `${order.crop.name} - ${order.crop.variety}`;
+    if (order.sapling) return `${order.sapling.name} (${order.sapling.type})`;
+    if (order.fish) return `${order.fish.name} (Fish)`;
+    return "No items";
   };
 
   return (
@@ -68,9 +70,9 @@ const OrderRow = ({ order, userID, onUpdateStatus }) => {
           <span className="ml-2 text-sm text-[#606C38]">Updating...</span>
         )}
       </td>
-      <td className="px-6 py-4 text-[#283618]">{formatCrops()}</td>
+      <td className="px-6 py-4 text-[#283618]">{formatItems()}</td>
       <td className="px-6 py-4 text-[#283618] font-semibold">
-        ₹{order.crop.price?.toLocaleString() || 0}
+        ₹{(order.crop?.price || order.sapling?.price || order.fish?.price || 0).toLocaleString()}
       </td>
       <td className="px-6 py-4 text-[#283618]">
         {order.orderDate
@@ -225,8 +227,9 @@ export default function FarmerProfile() {
       <motion.div className="max-w-4xl mx-auto">
         <motion.div className="bg-[#283618] rounded-t-2xl px-8 py-12 text-center shadow-lg overflow-hidden">
           <motion.div
-            className="w-24 h-24 bg-[#FEFAE0] rounded-full flex justify-center items-center mx-auto mb-6 shadow-md"
-            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate("/settings")}
+            className="w-24 h-24 bg-[#FEFAE0] rounded-full flex justify-center items-center mx-auto mb-6 shadow-md cursor-pointer hover:bg-white transition-all"
+            whileHover={{ scale: 1.1 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <Sprout className="w-12 h-12 text-[#606C38]" />

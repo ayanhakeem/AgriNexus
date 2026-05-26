@@ -100,14 +100,17 @@ farmerRouter.put("/:clerkId/crops/:cropId", async (req, res) => {
 farmerRouter.delete("/:clerkId/crops/:cropId", async (req, res) => {
   try {
     const { clerkId, cropId } = req.params;
-    const crop = await Crop.findOneAndDelete({
-      _id: cropId,
-      farmerClerkId: clerkId,
-    });
-    if (!crop)
-      return res
-        .status(404)
-        .json({ message: "Crop not found or unauthorized" });
+    const { requesterId } = req.body;
+    const adminId = "user_2mZ19nK8i7O5eF8E1Pz9Q7z6z2O";
+
+    const crop = await Crop.findById(cropId);
+    if (!crop) return res.status(404).json({ message: "Crop not found" });
+
+    if (crop.farmerClerkId !== requesterId && requesterId !== adminId) {
+      return res.status(403).json({ message: "Unauthorized: Only the owner can delete this crop" });
+    }
+
+    await Crop.findByIdAndDelete(cropId);
 
     // Also remove from farmer's crops array
     await Farmer.updateOne({ clerkId }, { $pull: { crops: cropId } });

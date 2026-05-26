@@ -6,7 +6,7 @@ const equipmentRouter = express.Router();
 // GET all equipment
 equipmentRouter.get("/", async (req, res) => {
   try {
-    const equipmentList = await Equipment.find({});
+    const equipmentList = await Equipment.find({}).lean();
     res.json(equipmentList);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -70,11 +70,20 @@ equipmentRouter.put("/:id/certification", async (req, res) => {
   }
 });
 
-// DELETE equipment
 equipmentRouter.delete("/:id", async (req, res) => {
   try {
-    const deleted = await Equipment.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ message: "Not found" });
+    const { requesterId } = req.body;
+    const adminId = "user_2mZ19nK8i7O5eF8E1Pz9Q7z6z2O"; // Admin ID
+
+    const equipment = await Equipment.findById(req.params.id);
+    if (!equipment) return res.status(404).json({ message: "Not found" });
+
+    // Check if requester is owner or admin
+    if (equipment.clerkId !== requesterId && requesterId !== adminId) {
+      return res.status(403).json({ message: "Unauthorized: Only the owner can delete this equipment" });
+    }
+
+    await Equipment.findByIdAndDelete(req.params.id);
     res.json({ message: "Deleted successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });

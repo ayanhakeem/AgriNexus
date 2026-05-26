@@ -67,125 +67,71 @@ const PublicFarmerProfile = () => {
     <div className="min-h-screen bg-[#FEFAE0]/30 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Farmer Info Header */}
-        <div className="bg-[#283618] rounded-t-xl p-8 text-center shadow-lg">
-          <h1 className="text-3xl font-bold text-[#FEFAE0] mb-2">
-            {farmer.emailId.split("@")[0]}
+        <div className="bg-[#283618] rounded-xl p-10 text-center shadow-xl mb-8">
+          <div className="w-20 h-20 bg-[#DDA15E] rounded-full flex items-center justify-center mx-auto mb-6 shadow-md">
+            <span className="text-3xl font-bold text-[#283618]">
+              {(farmer.name || farmer.emailId)[0].toUpperCase()}
+            </span>
+          </div>
+          <h1 className="text-4xl font-bold text-[#FEFAE0] mb-2">
+            {farmer.name || farmer.emailId.split("@")[0]}
           </h1>
-          <div className="h-1 w-24 bg-[#DDA15E] mx-auto rounded-full mb-4" />
-          <a
-            href={"mailto:" + farmer.emailId}
-            className="text-[#DDA15E] hover:text-[#BC6C25] transition-colors inline-flex items-center gap-2"
-          >
-            <span>{farmer.emailId}</span>
-          </a>
+          <p className="text-[#DDA15E] font-medium mb-6 uppercase tracking-widest text-sm">Farmer Profile</p>
+          <div className="h-1 w-24 bg-[#DDA15E] mx-auto rounded-full mb-8" />
+          
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 inline-block min-w-[300px]">
+            <p className="text-[#FEFAE0]/70 text-sm mb-1">Email Address</p>
+            <a
+              href={"mailto:" + farmer.emailId}
+              className="text-[#FEFAE0] hover:text-[#DDA15E] transition-all text-xl font-semibold underline decoration-[#DDA15E]"
+            >
+              {farmer.emailId}
+            </a>
+          </div>
         </div>
 
-        {/* Crop Info */}
-        <div className="bg-white rounded-b-xl shadow-lg p-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-semibold text-[#283618] flex items-center">
-              <FontAwesomeIcon icon={faLeaf} className="text-[#606C38] mr-3" />
-              Available Crops
-            </h2>
-          </div>
+        {/* Crop Info - Only show if crops exist */}
+        {crops.length > 0 && (
+          <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <div className="mb-6">
+              <h2 className="text-2xl font-semibold text-[#283618] flex items-center">
+                <FontAwesomeIcon icon={faLeaf} className="text-[#606C38] mr-3" />
+                Available Crops
+              </h2>
+            </div>
 
-          {crops.length > 0 ? (
             <div className="overflow-x-auto rounded-lg border border-[#DDA15E]/20">
               <table className="w-full bg-white text-left border-collapse">
                 <thead className="bg-[#FEFAE0]">
                   <tr>
-                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">
-                      Crop Name
-                    </th>
-                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">
-                      Variety
-                    </th>
-                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">
-                      Price/kg
-                    </th>
-                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">
-                      Weight
-                    </th>
-                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">
-                      Location
-                    </th>
+                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">Crop Name</th>
+                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">Variety</th>
+                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">Price/kg</th>
+                    <th className="px-6 py-3 text-[#606C38] font-medium uppercase text-xs">Location</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#DDA15E]/20">
                   {crops.map((crop) => (
-                    <tr
-                      key={crop._id}
-                      className="hover:bg-[#FEFAE0]/50 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <FontAwesomeIcon
-                            icon={faLeaf}
-                            className="text-[#606C38] mr-2"
-                          />
-                          <span className="font-medium text-[#283618]">
-                            {crop.name}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[#283618]">
-                        {crop.variety}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          {/* <FontAwesomeIcon icon={faDollarSign} className="text-[#BC6C25] mr-2" /> */}
-                          <span className="font-medium text-[#BC6C25]">
-                            ₹{crop.price}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <FontAwesomeIcon
-                            icon={faWeightScale}
-                            className="text-[#606C38] mr-2"
-                          />
-                          <span className="text-[#283618]">
-                            {crop.quantity} kg
-                          </span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <FontAwesomeIcon
-                            icon={faLocationDot}
-                            className="text-[#DDA15E] mr-2"
-                          />
-                          <span className="text-[#283618]">
-                            {crop.location}
-                          </span>
-                        </div>
-                      </td>
+                    <tr key={crop._id} className="hover:bg-[#FEFAE0]/50 transition-colors">
+                      <td className="px-6 py-4 font-medium text-[#283618]">{crop.name}</td>
+                      <td className="px-6 py-4 text-[#283618]">{crop.variety}</td>
+                      <td className="px-6 py-4 font-medium text-[#BC6C25]">₹{crop.price}</td>
+                      <td className="px-6 py-4 text-[#283618]">{crop.location}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-          ) : (
-            <div className="text-center py-12 bg-[#FEFAE0]/30 rounded-lg">
-              <FontAwesomeIcon
-                icon={faLeaf}
-                className="text-5xl text-[#606C38]/30 mb-4"
-              />
-              <p className="text-lg text-[#606C38]">
-                No crops available at this time.
-              </p>
-            </div>
-          )}
-
-          <div className="mt-8 pt-5 border-t border-[#DDA15E]/20 text-center">
-            <button
-              onClick={() => window.history.back()}
-              className="px-8 py-3 bg-[#606C38] text-[#FEFAE0] rounded-lg shadow-md font-medium"
-            >
-              Go Back
-            </button>
           </div>
+        )}
+
+        <div className="text-center">
+          <button
+            onClick={() => window.history.back()}
+            className="px-10 py-3 bg-[#606C38] text-[#FEFAE0] rounded-xl shadow-lg font-bold hover:bg-[#283618] transition-all"
+          >
+            Go Back
+          </button>
         </div>
       </div>
     </div>

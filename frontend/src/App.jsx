@@ -14,9 +14,12 @@ import PricePredictor from "./pages/Prediction/Predictor";
 import Login from "./pages/Login/Login";
 import FarmerProfile from "./pages/Profile/FarmerProfile";
 import BuyerProfile from "./pages/Profile/BuyerProfile";
+import Settings from "./pages/Profile/Settings";
 import LearningResourcesPage from "./pages/Learn/Learn";
 import FarmerMarket from "./pages/MarketPlace/FarmerMarket";
 import BuyerMarket from "./pages/MarketPlace/BuyerMarket";
+import NurseryMarket from "./pages/MarketPlace/NurseryMarket";
+import FishMarket from "./pages/MarketPlace/FishMarket";
 import PublicFarmerProfile from "./pages/Profile/PublicFarmerProfile";
 import ScrollToTop from "./components/ScrollToTop/ScrollToTop"; // Import ScrollToTop
 import AgriAssistant from "./components/AgriAssistant/AgriAssistant";
@@ -107,11 +110,14 @@ function App() {
             path="/profile"
             element={farmer ? <FarmerProfile /> : <BuyerProfile />}
           />
+          <Route path="/settings" element={<Settings />} />
 
           <Route
             path={"/marketplace"}
             element={(farmer && <FarmerMarket />) || <BuyerMarket />}
           />
+          <Route path="/nursery" element={<NurseryMarket />} />
+          <Route path="/fish-market" element={<FishMarket />} />
           <Route path="farmer/:farmerID" element={<PublicFarmerProfile />} />
           <Route path="/equipments" element={<CertificationDashboard />} />
         </Routes>

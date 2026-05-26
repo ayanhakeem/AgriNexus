@@ -4,7 +4,9 @@ import { cropSchema } from "../schema/cropSchema.js";
 const orderSchema = new mongoose.Schema({
   buyerClerkId: { type: String, required: true, ref: "Buyer" },
   farmerClerkId: { type: String, required: true, ref: "Farmer" },
-  crop: cropSchema,
+  crop: { type: cropSchema, required: false },
+  sapling: { type: Object, required: false }, // Store sapling details
+  fish: { type: Object, required: false }, // Store fish details
   status: {
     type: String,
     enum: ["pending", "accepted", "shipped", "delivered", "cancelled"],

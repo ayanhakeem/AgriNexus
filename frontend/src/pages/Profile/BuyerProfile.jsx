@@ -74,10 +74,16 @@ export default function BuyerProfile() {
         {order.farmerId?.name || "Farmer"}
       </td>
       <td className="px-6 py-4 text-[#283618]">
-        {order.crop.name} - {order.crop.variety}
+        {order.crop 
+          ? `${order.crop.name} - ${order.crop.variety}` 
+          : order.sapling 
+            ? `${order.sapling.name} (${order.sapling.type})`
+            : order.fish
+              ? `${order.fish.name} (Fish)`
+              : "N/A"}
       </td>
       <td className="px-6 py-4 font-semibold text-[#BC6C25]">
-        ₹{order.crop.price || 0}
+        ₹{(order.crop?.price || order.sapling?.price || order.fish?.price || 0).toLocaleString()}
       </td>
       <td className="px-6 py-4">
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-[#606C38]/20 text-[#283618]">
@@ -134,9 +140,13 @@ export default function BuyerProfile() {
       <motion.div className="max-w-5xl mx-auto">
         {/* Header */}
         <motion.div className="bg-[#606C38] p-8 rounded-t-2xl text-center shadow-lg">
-          <div className="w-24 h-24 text-[#FEFAE0] flex items-center justify-center rounded-full mx-auto mb-6 shadow-md">
+          <motion.div 
+            onClick={() => navigate("/settings")}
+            className="w-24 h-24 text-[#FEFAE0] flex items-center justify-center rounded-full mx-auto mb-6 shadow-md cursor-pointer bg-[#FEFAE0]/10 hover:bg-[#FEFAE0]/20 transition-all"
+            whileHover={{ scale: 1.1 }}
+          >
             <ShoppingCart className="w-12 h-12 text-[#283618]" />
-          </div>
+          </motion.div>
           <h2 className="text-[#FEFAE0] text-3xl font-bold">
             Welcome, {user?.firstName || "Buyer"}!
           </h2>

@@ -318,6 +318,10 @@ export default function ModernMarketplace() {
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
                     if (userId) {
+                      if (userId === crop.farmerClerkId) {
+                        toast.warning("You are the owner of this crop listing.");
+                        return;
+                      }
                       placeOrder(
                         userId,
                         crop.farmerClerkId,

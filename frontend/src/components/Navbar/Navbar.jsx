@@ -53,6 +53,8 @@ const Navbar = () => {
 
   const navItems = [
     { path: "/marketplace", label: "Market Place" },
+    { path: "/nursery", label: "Nursery" },
+    { path: "/fish-market", label: "Fish Market" },
     { path: "/learn", label: "Learning Resources" },
     { path: "/schemes", label: "Government Schemes" },
     { path: "/equipments", label: "Equipments" },
@@ -111,7 +113,7 @@ const Navbar = () => {
       <div className="mx-auto px-4 max-w-7xl">
         <div className="flex justify-between items-center h-20">
           <motion.div
-            className="cursor-pointer"
+            className="cursor-pointer flex-shrink-0 mr-8"
             onClick={() => navigate("/")}
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -119,7 +121,7 @@ const Navbar = () => {
             <Logo />
           </motion.div>
 
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <motion.button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-[#283618] p-2 hover:text-[#606C38]"
@@ -158,43 +160,43 @@ const Navbar = () => {
             </motion.button>
           </div>
 
-          <div className="hidden md:flex items-center space-x-6">
-            {navItems.map((item, i) =>{ 
-              const isActive = item.path === location.pathname;
-              return (
-              <motion.button
-                key={item.path}
-                onClick={() => navigate(item.path)}
-                className={`cursor-pointer text-[#283618] hover:text-[#606C38] transition-colors relative py-2 ${isActive ? "border-b-2 border-[#606C38]" : ""}`}
-                custom={i}
-                variants={navVariants}
-                initial="hidden"
-                animate="visible"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item.label}
-                <motion.div
-                  className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#606C38]"
-                  whileHover={{ width: "100%" }}
-                  transition={{ duration: 0.3 }}
-                />
-              </motion.button>
-            )})}
+          <div className="hidden lg:flex items-center flex-1 justify-end space-x-4">
+            <div className="flex items-center space-x-1 xl:space-x-4">
+              {navItems.map((item, i) => {
+                const isActive = item.path === location.pathname;
+                return (
+                  <motion.button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    className={`cursor-pointer text-[#283618] hover:text-[#606C38] transition-colors relative py-2 px-1 text-sm xl:text-base whitespace-nowrap ${
+                      isActive ? "border-b-2 border-[#606C38] font-semibold" : ""
+                    }`}
+                    custom={i}
+                    variants={navVariants}
+                    initial="hidden"
+                    animate="visible"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {item.label}
+                  </motion.button>
+                );
+              })}
+            </div>
 
             {isSignedIn ? (
               <motion.div
-                className="relative"
+                className="relative ml-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
                 <motion.div
-                  className="flex items-center space-x-2 cursor-pointer text-[#283618] bg-[#DDA15E] bg-opacity-20 px-4 py-2 rounded-full"
+                  className="flex items-center space-x-2 cursor-pointer text-[#283618] bg-[#DDA15E] bg-opacity-20 px-3 py-1.5 rounded-full"
                   whileHover={{ backgroundColor: "rgba(221, 161, 94, 0.3)" }}
                   onClick={() => setDropdownVisible(!dropdownVisible)}
                 >
                   <UserButton />
-                  <span className="font-medium">
+                  <span className="font-medium text-sm hidden xl:inline">
                     {user
                       ? getUsername(user.primaryEmailAddress.emailAddress)
                       : "User"}
@@ -202,11 +204,11 @@ const Navbar = () => {
                   <motion.span
                     animate={{ rotate: dropdownVisible ? 180 : 0 }}
                     transition={{ duration: 0.3 }}
+                    className="text-xs"
                   >
                     ▼
                   </motion.span>
                 </motion.div>
-
                 <AnimatePresence>
                   {dropdownVisible && (
                     <motion.div
@@ -233,7 +235,7 @@ const Navbar = () => {
             ) : (
               <SignInButton>
                 <motion.button
-                  className="cursor-pointer bg-[#606C38] text-[#FEFAE0] px-5 py-2 rounded-full hover:bg-[#283618] transition-colors"
+                  className="cursor-pointer bg-[#606C38] text-[#FEFAE0] px-5 py-2 rounded-full hover:bg-[#283618] transition-colors text-sm whitespace-nowrap"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0 }}
@@ -250,7 +252,7 @@ const Navbar = () => {
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              className="md:hidden border-t border-[#DDA15E]/20"
+              className="lg:hidden border-t border-[#DDA15E]/20"
               variants={mobileMenuVariants}
               initial="closed"
               animate="open"

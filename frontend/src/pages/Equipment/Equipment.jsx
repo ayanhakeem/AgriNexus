@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sprout } from "lucide-react";
+import { Sprout, Trash2 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
+
 export default function CertificationDashboard() {
+  const { user } = useUser();
+  const navigate = useNavigate();
   const [equipmentList, setEquipmentList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedEquipment, setSelectedEquipment] = useState(null);
   const [showCertificationModal, setShowCertificationModal] = useState(false);
   const [showAddEquipmentModal, setShowAddEquipmentModal] = useState(false);
@@ -22,7 +28,8 @@ export default function CertificationDashboard() {
     verified: false,
     documentUrl: "",
   });
-  const [isAdmin] = useState(true); // simulate admin
+  const adminId = "user_2mZ19nK8i7O5eF8E1Pz9Q7z6z2O"; // Replace with your actual Clerk Admin ID
+  const isAdmin = user?.id === adminId;
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -42,13 +49,16 @@ export default function CertificationDashboard() {
   // Fetch equipment list
   useEffect(() => {
     async function fetchEquipment() {
+      setLoading(true);
       try {
         const res = await fetch(`${backendUrl}/api/equipment`);
         if (!res.ok) throw new Error("Failed to fetch equipment");
         const data = await res.json();
         setEquipmentList(data);
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
       }
     }
     fetchEquipment();
@@ -119,13 +129,31 @@ export default function CertificationDashboard() {
       const res = await fetch(`${backendUrl}/api/equipment`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newEquipmentForm),
+        body: JSON.stringify({ ...newEquipmentForm, clerkId: user?.id }),
       });
       if (!res.ok) throw new Error("Failed to add equipment");
       const created = await res.json();
       setEquipmentList((prev) => [...prev, created]);
       setShowAddEquipmentModal(false);
       setNewEquipmentForm({ name: "", description: "" });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Delete equipment
+  const handleDeleteEquipment = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this equipment?")) return;
+    try {
+      const res = await fetch(`${backendUrl}/api/equipment/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ requesterId: user?.id }),
+      });
+      if (!res.ok) throw new Error("Failed to delete equipment");
+      setEquipmentList((prev) => prev.filter((item) => item._id !== id));
     } catch (err) {
       console.error(err);
     }
@@ -172,76 +200,114 @@ export default function CertificationDashboard() {
 
       {/* Equipment List */}
       <div className="grid md:grid-cols-2 gap-8">
-        {equipmentList.map((equipment) => (
-          <motion.div
-            key={equipment._id}
-            className="bg-white rounded-b-2xl p-6 relative border border-[#DDA15E]/30 shadow-md"
-            variants={itemVariants}
-          >
-            <h2 className="text-xl font-semibold text-[#283618] mb-2 flex items-center gap-2">
-              {equipment.name}
-              {equipment.certified ? (
-                <FontAwesomeIcon
-                  icon={FaCheckCircle}
-                  title="Certified"
-                  className="text-[#606C38] cursor-pointer"
-                  onClick={() => openCertificationModal(equipment)}
-                />
-              ) : (
-                isAdmin && (
-                  <button
-                    onClick={() => openCertificationModal(equipment)}
-                    className="ml-auto px-2 py-1 bg-[#DDA15E] text-[#283618] rounded text-sm font-semibold"
-                    title="Add Certification"
-                  >
-                    Add Certification
-                  </button>
-                )
-              )}
-            </h2>
-            <p className="text-[#606C38] mb-4">{equipment.description}</p>
-
-            {/* Certification details or status */}
-            {equipment.certified ? (
-              <div className="text-sm text-[#283618] space-y-1">
-                <div>
-                  <strong>Certification Body:</strong>{" "}
-                  {equipment.certificationDetails.certificationBody}
-                </div>
-                <div>
-                  <strong>Certificate Number:</strong>{" "}
-                  {equipment.certificationDetails.certificateNumber}
-                </div>
-                <div>
-                  <strong>Issued On:</strong>{" "}
-                  {new Date(
-                    equipment.certificationDetails.certificationDate
-                  ).toLocaleDateString()}
-                </div>
-                <div>
-                  <strong>Expires On:</strong>{" "}
-                  {new Date(
-                    equipment.certificationDetails.expiryDate
-                  ).toLocaleDateString()}
-                </div>
-                <div className="flex items-center gap-1">
-                  <strong>Status:</strong>
-                  {equipment.certificationDetails.verified ? (
-                    <span className="text-[#606C38] flex items-center gap-1">
-                      Verified <FaCheckCircle />
-                    </span>
-                  ) : (
-                    <span className="text-red-600 flex items-center gap-1">
-                      Unverified <FaTimesCircle />
-                    </span>
+        {loading ? (
+          <div className="col-span-full flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#606C38] mb-4"></div>
+            <p className="text-[#606C38] font-medium">Loading equipment...</p>
+          </div>
+        ) : equipmentList.length > 0 ? (
+          equipmentList.map((equipment) => (
+            <motion.div
+              key={equipment._id}
+              className="bg-white rounded-b-2xl p-6 relative border border-[#DDA15E]/30 shadow-md"
+              variants={itemVariants}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <h2 className="text-xl font-semibold text-[#283618] flex items-center gap-2">
+                  {equipment.name}
+                  {equipment.certified && (
+                    <FaCheckCircle
+                      title="Certified"
+                      className="text-[#606C38] cursor-pointer"
+                      onClick={() => openCertificationModal(equipment)}
+                    />
                   )}
+                </h2>
+                <div className="flex items-center gap-2">
+                  {!equipment.certified && isAdmin && (
+                    <button
+                      onClick={() => openCertificationModal(equipment)}
+                      className="px-2 py-1 bg-[#DDA15E] text-[#283618] rounded text-sm font-semibold hover:bg-[#c68e4d] transition-colors"
+                      title="Add Certification"
+                    >
+                      Add Certification
+                    </button>
+                  )}
+                  {(isAdmin || user?.id === equipment.clerkId) && (
+                  <motion.button
+                    whileHover={{ scale: 1.1, backgroundColor: "rgba(239, 68, 68, 0.2)" }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => handleDeleteEquipment(equipment._id)}
+                    className="p-2 text-red-600 bg-red-500/10 rounded-xl transition-all shadow-sm flex items-center justify-center"
+                    title="Delete Equipment"
+                  >
+                    <Trash2 size={20} />
+                  </motion.button>
+                )}
                 </div>
               </div>
-            ) : (
-              <p className="text-red-600 font-semibold">Not Certified</p>
-            )}
-          </motion.div>
-        ))}
+              <p className="text-[#606C38] mb-4">{equipment.description}</p>
+
+              {/* Certification details or status */}
+              {equipment.certified ? (
+                <div className="text-sm text-[#283618] space-y-1">
+                  <div>
+                    <strong>Certification Body:</strong>{" "}
+                    {equipment.certificationDetails.certificationBody}
+                  </div>
+                  <div>
+                    <strong>Certificate Number:</strong>{" "}
+                    {equipment.certificationDetails.certificateNumber}
+                  </div>
+                  <div>
+                    <strong>Issued On:</strong>{" "}
+                    {new Date(
+                      equipment.certificationDetails.certificationDate
+                    ).toLocaleDateString()}
+                  </div>
+                  <div>
+                    <strong>Expires On:</strong>{" "}
+                    {new Date(
+                      equipment.certificationDetails.expiryDate
+                    ).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <strong>Status:</strong>
+                    {equipment.certificationDetails.verified ? (
+                      <span className="text-[#606C38] flex items-center gap-1">
+                        Verified <FaCheckCircle />
+                      </span>
+                    ) : (
+                      <span className="text-red-600 flex items-center gap-1">
+                        Unverified <FaTimesCircle />
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-gray-400 italic">
+                  No certification details provided.
+                </div>
+              )}
+
+              <div className="mt-6 pt-4 border-t border-[#DDA15E]/10">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => navigate(`/farmer/${equipment.clerkId}`)}
+                  className="w-full py-3 bg-[#606C38] text-[#FEFAE0] rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#283618] transition-all shadow-lg"
+                >
+                  Contact Owner
+                </motion.button>
+              </div>
+            </motion.div>
+          ))
+        ) : (
+          <div className="col-span-full text-center py-20 bg-white/50 rounded-2xl border-2 border-dashed border-[#DDA15E]/50">
+            <p className="text-[#606C38] text-lg font-semibold">No equipment found.</p>
+            <p className="text-[#606C38]/70">Try adding some equipment above!</p>
+          </div>
+        )}
       </div>
 
       {/* Add Equipment Modal */}

@@ -15,6 +15,11 @@ const equipmentSchema = new mongoose.Schema({
   certified: { type: Boolean, default: false },
   certificationDetails: certificationSchema,
   clerkId: String,
-});
+}, { collection: "equipment" });
 
-export default mongoose.model("Equipment", equipmentSchema);
+equipmentSchema.index({ name: 1 });
+equipmentSchema.index({ clerkId: 1 });
+
+const Equipment = mongoose.models.Equipment || mongoose.model("Equipment", equipmentSchema);
+
+export default Equipment;

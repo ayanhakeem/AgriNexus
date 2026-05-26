@@ -21,7 +21,7 @@ buyerRouter.post("/add", async (req, res) => {
 buyerRouter.post("/:clerkId/orders/place", async (req, res) => {
   try {
     const { clerkId } = req.params;
-    const { farmerClerkId, crop } = req.body;
+    const { farmerClerkId, crop, sapling, fish } = req.body;
     // crops: [{ cropId, quantity }, ...]
 
     const buyer = await Buyer.findOne({ clerkId });
@@ -31,7 +31,9 @@ buyerRouter.post("/:clerkId/orders/place", async (req, res) => {
     const order = new Order({
       buyerClerkId: clerkId,
       farmerClerkId,
-      crop,
+      crop: crop || undefined,
+      sapling: sapling || undefined,
+      fish: fish || undefined,
       status: "pending",
       orderDate: new Date(),
     });

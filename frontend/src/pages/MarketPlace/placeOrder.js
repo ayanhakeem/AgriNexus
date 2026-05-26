@@ -13,7 +13,9 @@ async function placeOrder(buyerClerkId, farmerClerkId, crop, setSelectedCrop) {
         },
         body: JSON.stringify({
           farmerClerkId,
-          crop,
+          crop: (crop?.variety && !crop?.age) ? crop : null,
+          sapling: crop?.age ? crop : null,
+          fish: crop?.harvestDate ? crop : null,
         }),
       }
     );
