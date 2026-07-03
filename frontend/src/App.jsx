@@ -25,6 +25,8 @@ import ScrollToTop from "./components/ScrollToTop/ScrollToTop"; // Import Scroll
 import AgriAssistant from "./components/AgriAssistant/AgriAssistant";
 import PlantAssistantButton from "./components/PlantAssistantButton/PlantAssistantButton";
 import Analytics from "./pages/Analytics/Analytics";
+import PaymentSuccess from "./pages/Payment/PaymentSuccess";
+import PaymentCancelled from "./pages/Payment/PaymentCancelled";
 import {
   useUser,
   useSignIn,
@@ -120,6 +122,8 @@ function App() {
           <Route path="/fish-market" element={<FishMarket />} />
           <Route path="farmer/:farmerID" element={<PublicFarmerProfile />} />
           <Route path="/equipments" element={<CertificationDashboard />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
+          <Route path="/payment-cancelled" element={<PaymentCancelled />} />
         </Routes>
       </div>
       <div>

@@ -4,34 +4,46 @@ async function placeOrder(buyerClerkId, farmerClerkId, crop, setSelectedCrop) {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   try {
+    let itemType = "crop";
+    if (crop?.age) {
+      itemType = "sapling";
+    } else if (crop?.harvestDate) {
+      itemType = "fish";
+    }
+
     const response = await fetch(
-      `${backendUrl}/api/buyer/${buyerClerkId}/orders/place`,
+      `${backendUrl}/api/buyer/create-checkout-session`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          buyerClerkId,
           farmerClerkId,
-          crop: (crop?.variety && !crop?.age) ? crop : null,
-          sapling: crop?.age ? crop : null,
-          fish: crop?.harvestDate ? crop : null,
+          item: crop,
+          itemType,
         }),
       }
     );
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || "Failed to place order");
+      throw new Error(errorData.error || "Failed to initiate payment session");
     }
 
     const data = await response.json();
-    console.log("Order placed successfully", data.order);
-    toast.success("Order placed successfully");
+    if (data.url) {
+      toast.info("Redirecting to secure Stripe payment...");
+      window.location.href = data.url;
+    } else {
+      throw new Error("No checkout URL returned from server");
+    }
+    
     setSelectedCrop(null);
   } catch (error) {
-    console.error("Error placing order:", error);
-    toast.error("Error placing order");
+    console.error("Error initiating payment session:", error);
+    toast.error(error.message || "Error initiating payment session");
     setSelectedCrop(null);
     throw error;
   }

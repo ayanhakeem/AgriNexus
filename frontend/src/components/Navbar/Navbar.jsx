@@ -8,36 +8,40 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "/new_logo2.png";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 // Logo component with updated styling
-const Logo = () => (
-  <motion.div
-    className="flex items-center space-x-2"
-    initial={{ opacity: 0, y: -10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-  >
-    <img src={logo} alt="logo" className="h-10 w-auto" />
-    <div className="font-bold flex">
-      <motion.span
-        className="text-[#BC6C25] text-3xl"
-        initial={{ x: -20 }}
-        animate={{ x: 0 }}
-        transition={{ type: "spring", stiffness: 100 }}
-      >
-        Agri
-      </motion.span>
-      <motion.span
-        className="text-[#606C38] text-3xl"
-        initial={{ x: 20 }}
-        animate={{ x: 0 }}
-        transition={{ type: "spring", stiffness: 100 }}
-      >
-        Nexus
-      </motion.span>
-    </div>
-  </motion.div>
-);
+const Logo = () => {
+  const { t } = useTranslation();
+  return (
+    <motion.div
+      className="flex items-center space-x-2"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <img src={logo} alt="logo" className="h-10 w-auto" />
+      <div className="font-bold flex">
+        <motion.span
+          className="text-[#BC6C25] text-3xl"
+          initial={{ x: -20 }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 100 }}
+        >
+          {t("logo.agri")}
+        </motion.span>
+        <motion.span
+          className="text-[#606C38] text-3xl"
+          initial={{ x: 20 }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 100 }}
+        >
+          {t("logo.nexus")}
+        </motion.span>
+      </div>
+    </motion.div>
+  );
+};
 
 const Navbar = () => {
   const { user, isSignedIn } = useUser();
@@ -45,6 +49,8 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   const getUsername = (email) => {
     if (!email) return "User";
@@ -52,14 +58,14 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { path: "/marketplace", label: "Market Place" },
-    { path: "/nursery", label: "Nursery" },
-    { path: "/fish-market", label: "Fish Market" },
-    { path: "/learn", label: "Learning Resources" },
-    { path: "/schemes", label: "Government Schemes" },
-    { path: "/equipments", label: "Equipments" },
-    { path: "/analytics", label: "Analytics" },
-    { path: "/about", label: "About us" },
+    { path: "/marketplace", label: t("navbar.marketplace") },
+    { path: "/nursery", label: t("navbar.nursery") },
+    { path: "/fish-market", label: t("navbar.fishMarket") },
+    { path: "/learn", label: t("navbar.learn") },
+    { path: "/schemes", label: t("navbar.schemes") },
+    { path: "/equipments", label: t("navbar.equipments") },
+    { path: "/analytics", label: t("navbar.analytics") },
+    { path: "/about", label: t("navbar.about") },
   ];
 
   useEffect(() => {
@@ -184,6 +190,61 @@ const Navbar = () => {
               })}
             </div>
 
+            {/* Language Switcher */}
+            <div className="relative z-50">
+              <motion.button
+                onClick={() => setLangDropdownOpen(!langDropdownOpen)}
+                className="flex items-center space-x-1.5 cursor-pointer text-[#283618] bg-[#DDA15E] bg-opacity-20 px-3 py-1.5 rounded-full text-sm font-semibold hover:bg-opacity-30 transition-all"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span>🌐 {i18n.language && i18n.language.startsWith("kn") ? "ಕನ್ನಡ" : "English"}</span>
+                <motion.span
+                  animate={{ rotate: langDropdownOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="text-[10px]"
+                >
+                  ▼
+                </motion.span>
+              </motion.button>
+              <AnimatePresence>
+                {langDropdownOpen && (
+                  <motion.div
+                    className="absolute right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 border border-gray-100 z-50 overflow-hidden"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <motion.button
+                      className={`cursor-pointer block w-full text-left px-4 py-2 text-sm hover:bg-[#FEFAE0] ${
+                        i18n.language && i18n.language.startsWith("en") ? "font-bold text-[#606C38]" : "text-[#283618]"
+                      }`}
+                      onClick={() => {
+                        i18n.changeLanguage("en");
+                        setLangDropdownOpen(false);
+                      }}
+                      whileHover={{ x: 3 }}
+                    >
+                      English
+                    </motion.button>
+                    <motion.button
+                      className={`cursor-pointer block w-full text-left px-4 py-2 text-sm hover:bg-[#FEFAE0] ${
+                        i18n.language && i18n.language.startsWith("kn") ? "font-bold text-[#606C38]" : "text-[#283618]"
+                      }`}
+                      onClick={() => {
+                        i18n.changeLanguage("kn");
+                        setLangDropdownOpen(false);
+                      }}
+                      whileHover={{ x: 3 }}
+                    >
+                      ಕನ್ನಡ
+                    </motion.button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             {isSignedIn ? (
               <motion.div
                 className="relative ml-2"
@@ -223,7 +284,7 @@ const Navbar = () => {
                         whileHover={{ x: 5 }}
                         onClick={() => navigate("/profile")}
                       >
-                        My Profile
+                        {t("navbar.profile")}
                       </motion.button>
                       <motion.div className="block w-full px-4 py-2">
                         <SignOutButton />
@@ -241,7 +302,7 @@ const Navbar = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  Sign in
+                  {t("navbar.signin")}
                 </motion.button>
               </SignInButton>
             )}
@@ -285,7 +346,7 @@ const Navbar = () => {
                       variants={itemVariants}
                       whileHover={{ x: 5 }}
                     >
-                      My Profile
+                      {t("navbar.profile")}
                     </motion.button>
                     <motion.button
                       onClick={() => {
@@ -306,10 +367,37 @@ const Navbar = () => {
                       className="block w-full text-center px-3 py-2 text-[#FEFAE0] bg-[#606C38] hover:bg-[#283618] rounded-md mt-3"
                       variants={itemVariants}
                     >
-                      Sign in
+                      {t("navbar.signin")}
                     </motion.button>
                   </SignInButton>
                 )}
+
+                {/* Language Switcher for Mobile */}
+                <div className="border-t border-[#DDA15E]/20 pt-3 mt-3 px-3">
+                  <span className="block text-xs font-semibold text-[#283618]/60 uppercase tracking-wider mb-2">Language / ಭಾಷೆ</span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => i18n.changeLanguage("en")}
+                      className={`flex-1 py-2 text-center text-sm rounded-md transition-colors font-medium cursor-pointer ${
+                        i18n.language && i18n.language.startsWith("en")
+                          ? "bg-[#606C38] text-[#FEFAE0] font-semibold shadow-sm"
+                          : "bg-[#DDA15E]/10 text-[#283618] hover:bg-[#DDA15E]/20"
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      onClick={() => i18n.changeLanguage("kn")}
+                      className={`flex-1 py-2 text-center text-sm rounded-md transition-colors font-medium cursor-pointer ${
+                        i18n.language && i18n.language.startsWith("kn")
+                          ? "bg-[#606C38] text-[#FEFAE0] font-semibold shadow-sm"
+                          : "bg-[#DDA15E]/10 text-[#283618] hover:bg-[#DDA15E]/20"
+                      }`}
+                    >
+                      ಕನ್ನಡ
+                    </button>
+                  </div>
+                </div>
               </div>
             </motion.div>
           )}

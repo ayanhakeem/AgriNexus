@@ -17,9 +17,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import "./Home.css";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function Hero() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   return (
     <section className="relative min-h-[90vh] overflow-hidden bg-[#FEFAE0]">
       <div className="absolute w-full h-full bg-pattern opacity-5 z-0"></div>
@@ -37,7 +39,15 @@ function Hero() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            AgriNexus: <span className="text-[#606C38]">Empowering</span> Farmers
+            {i18n.language && i18n.language.startsWith("kn") ? (
+              <>
+                ಅಗ್ರಿನೆಕ್ಸಸ್: <span className="text-[#606C38]">ರೈತರ</span> ಸಬಲೀಕರಣ
+              </>
+            ) : (
+              <>
+                AgriNexus: <span className="text-[#606C38]">Empowering</span> Farmers
+              </>
+            )}
           </motion.h1>
 
           <motion.h2
@@ -46,7 +56,7 @@ function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Farming Made Easier
+            {t("home.heroSub")}
           </motion.h2>
 
           <motion.p
@@ -55,9 +65,7 @@ function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            AgriNexus is here to support farmers with crop sales, modern farming
-            techniques, weather updates, and more. Empowering the agricultural
-            community, one farmer at a time.
+            {t("home.heroDesc")}
           </motion.p>
 
           <motion.div
@@ -73,7 +81,7 @@ function Hero() {
               transition={{ duration: 0.2 }}
               onClick={() => navigate("/marketplace")}
             >
-              Get Started
+              {t("home.getStarted")}
             </motion.button>
             <motion.button
               className="px-6 py-3 border-2 border-[#606C38] text-[#606C38] rounded-md font-medium cursor-pointer"
@@ -85,7 +93,7 @@ function Hero() {
               transition={{ duration: 0.2 }}
               onClick={() => navigate("/analytics")}
             >
-              Explore Analytics
+              {t("home.exploreAnalytics")}
             </motion.button>
           </motion.div>
         </motion.div>
@@ -123,16 +131,16 @@ function Hero() {
               >
                 <ul className="space-y-4">
                   {[
-                    { icon: faSeedling, text: "Buy and sell crops easily" },
+                    { icon: faSeedling, text: t("home.feature1") },
                     {
                       icon: faLightbulb,
-                      text: "Learn modern farming techniques",
+                      text: t("home.feature2"),
                     },
-                    { icon: faSun, text: "Access our own chatbot" },
-                    { icon: faLeaf, text: "Analyze crop prices" },
+                    { icon: faSun, text: t("home.feature3") },
+                    { icon: faLeaf, text: t("home.feature4") },
                     {
                       icon: faPaperPlane,
-                      text: "Get notified about government schemes",
+                      text: t("home.feature5"),
                     },
                   ].map((feature, index) => (
                     <motion.li
@@ -172,6 +180,7 @@ function Hero() {
 }
 
 const Stats = () => {
+  const { t, i18n } = useTranslation();
   const variants = {
     hidden: { opacity: 0, y: 50 },
     visible: (i) => ({
@@ -195,18 +204,26 @@ const Stats = () => {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8 }}
         >
-          Our <span className="text-[#BC6C25]">Impact</span> in Numbers
+          {i18n.language && i18n.language.startsWith("kn") ? (
+            <>
+              ಅಂಕಿ-ಅಂಶಗಳಲ್ಲಿ ನಮ್ಮ <span className="text-[#BC6C25]">ಪ್ರಭಾವ</span>
+            </>
+          ) : (
+            <>
+              Our <span className="text-[#BC6C25]">Impact</span> in Numbers
+            </>
+          )}
         </motion.h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
-            { icon: faTractor, value: "10,000+", label: "Active Farmers" },
+            { icon: faTractor, value: t("home.stat1Val"), label: t("home.stat1Lbl") },
             {
               icon: faHandHoldingHeart,
-              value: "50,000+",
-              label: "Successful Trades",
+              value: t("home.stat2Val"),
+              label: t("home.stat2Lbl"),
             },
-            { icon: faUsers, value: "100+", label: "Expert Consultants" },
+            { icon: faUsers, value: t("home.stat3Val"), label: t("home.stat3Lbl") },
           ].map((stat, index) => (
             <motion.div
               key={index}
@@ -241,6 +258,7 @@ const Stats = () => {
 };
 
 const Features = () => {
+  const { t } = useTranslation();
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -271,7 +289,7 @@ const Features = () => {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8 }}
         >
-          Why Choose AgriNexus?
+          {t("home.whyTitle")}
         </motion.h2>
 
         <motion.p
@@ -281,8 +299,7 @@ const Features = () => {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          Discover the tools and resources that make us the preferred platform
-          for farmers across India
+          {t("home.whySub")}
         </motion.p>
 
         <motion.div
@@ -295,21 +312,18 @@ const Features = () => {
           {[
             {
               icon: faChartLine,
-              title: "Market Insights",
-              description:
-                "Real-time crop price analytics and market trends to help you make informed decisions.",
+              title: t("home.insightTitle"),
+              description: t("home.insightDesc"),
             },
             {
               icon: faLightbulb,
-              title: "Chat Bot",
-              description:
-                "Your own chatbot for agricultural advisories and better crop planning.",
+              title: t("home.botTitle"),
+              description: t("home.botDesc"),
             },
             {
               icon: faNewspaper,
-              title: "Latest Updates",
-              description:
-                "Stay informed about agricultural policies and government schemes.",
+              title: t("home.updateTitle"),
+              description: t("home.updateDesc"),
             },
           ].map((feature, index) => (
             <motion.div
@@ -333,7 +347,7 @@ const Features = () => {
                 className="mt-6 flex items-center gap-2 text-[#606C38] font-medium cursor-pointer group"
                 whileHover={{ x: 5 }}
               >
-                <span>Learn more</span>
+                <span>{t("home.learnMore")}</span>
                 <FontAwesomeIcon
                   icon={faArrowRight}
                   className="transition-transform group-hover:translate-x-1"
@@ -347,56 +361,59 @@ const Features = () => {
   );
 };
 
-const CallToAction = () => (
-  <section className="py-20 bg-[#FEFAE0] relative overflow-hidden">
-    <div className="max-w-7xl mx-auto px-6 relative z-10">
-      <div className="max-w-3xl mx-auto text-center">
-        <motion.h2
-          className="text-3xl md:text-5xl font-bold text-[#283618] mb-6"
-          initial={{ opacity: 0, y: -20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8 }}
-        >
-          Join Our Growing Community
-        </motion.h2>
-
-        <motion.p
-          className="text-xl text-[#283618]/70 mb-10"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          Connect with farmers, experts, and agriculture enthusiasts
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-        >
-          <motion.button
-            className="px-8 py-4 bg-[#BC6C25] text-white rounded-lg text-xl font-semibold cursor-pointer"
-            whileHover={{ scale: 1.05, backgroundColor: "#a35a1f" }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ duration: 0.2 }}
+const CallToAction = () => {
+  const { t } = useTranslation();
+  return (
+    <section className="py-20 bg-[#FEFAE0] relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.h2
+            className="text-3xl md:text-5xl font-bold text-[#283618] mb-6"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8 }}
           >
-            Join Now
-          </motion.button>
-        </motion.div>
-      </div>
-    </div>
+            {t("home.ctaTitle")}
+          </motion.h2>
 
-    <div className="absolute top-0 left-0 w-full h-full">
-      <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-[#606C38]/10 z-0" />
-      <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-[#DDA15E]/10 z-0" />
-      <div className="absolute top-1/3 right-1/4 w-24 h-24 rounded-full bg-[#283618]/10 z-0" />
-      <div className="absolute bottom-1/3 left-1/4 w-20 h-20 rounded-full bg-[#BC6C25]/10 z-0" />
-    </div>
-  </section>
-);
+          <motion.p
+            className="text-xl text-[#283618]/70 mb-10"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            {t("home.ctaSub")}
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
+            <motion.button
+              className="px-8 py-4 bg-[#BC6C25] text-white rounded-lg text-xl font-semibold cursor-pointer"
+              whileHover={{ scale: 1.05, backgroundColor: "#a35a1f" }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+            >
+              {t("home.joinNow")}
+            </motion.button>
+          </motion.div>
+        </div>
+      </div>
+
+      <div className="absolute top-0 left-0 w-full h-full">
+        <div className="absolute top-10 left-10 w-32 h-32 rounded-full bg-[#606C38]/10 z-0" />
+        <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-[#DDA15E]/10 z-0" />
+        <div className="absolute top-1/3 right-1/4 w-24 h-24 rounded-full bg-[#283618]/10 z-0" />
+        <div className="absolute bottom-1/3 left-1/4 w-20 h-20 rounded-full bg-[#BC6C25]/10 z-0" />
+      </div>
+    </section>
+  );
+};
 
 const Home = () => {
   return (

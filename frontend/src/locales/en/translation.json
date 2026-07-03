@@ -1,0 +1,49 @@
+{
+  "logo": {
+    "agri": "Agri",
+    "nexus": "Nexus"
+  },
+  "navbar": {
+    "marketplace": "Market Place",
+    "nursery": "Nursery",
+    "fishMarket": "Fish Market",
+    "learn": "Learning Resources",
+    "schemes": "Government Schemes",
+    "equipments": "Equipments",
+    "analytics": "Analytics",
+    "about": "About us",
+    "profile": "My Profile",
+    "signin": "Sign in"
+  },
+  "home": {
+    "heroTitle": "AgriNexus: Empowering Farmers",
+    "heroSub": "Farming Made Easier",
+    "heroDesc": "AgriNexus is here to support farmers with crop sales, modern farming techniques, weather updates, and more. Empowering the agricultural community, one farmer at a time.",
+    "getStarted": "Get Started",
+    "exploreAnalytics": "Explore Analytics",
+    "feature1": "Buy and sell crops easily",
+    "feature2": "Learn modern farming techniques",
+    "feature3": "Access our own chatbot",
+    "feature4": "Analyze crop prices",
+    "feature5": "Get notified about government schemes",
+    "statsTitle": "Our Impact in Numbers",
+    "stat1Val": "10,000+",
+    "stat1Lbl": "Active Farmers",
+    "stat2Val": "50,000+",
+    "stat2Lbl": "Successful Trades",
+    "stat3Val": "100+",
+    "stat3Lbl": "Expert Consultants",
+    "whyTitle": "Why Choose AgriNexus?",
+    "whySub": "Discover the tools and resources that make us the preferred platform for farmers across India",
+    "insightTitle": "Market Insights",
+    "insightDesc": "Real-time crop price analytics and market trends to help you make informed decisions.",
+    "botTitle": "Chat Bot",
+    "botDesc": "Your own chatbot for agricultural advisories and better crop planning.",
+    "updateTitle": "Latest Updates",
+    "updateDesc": "Stay informed about agricultural policies and government schemes.",
+    "learnMore": "Learn more",
+    "ctaTitle": "Join Our Growing Community",
+    "ctaSub": "Connect with farmers, experts, and agriculture enthusiasts",
+    "joinNow": "Join Now"
+  }
+}
