@@ -1,192 +1,179 @@
-# AgriNexus 🌾
+# AgriNexus
 
-[![Node.js](https://img.shields.io/badge/Backend-Node.js%20%7C%20Express-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/Frontend-React.js-blue?style=for-the-badge&logo=react)](https://react.dev/)
-[![MongoDB](https://img.shields.io/badge/Database-MongoDB%20Atlas-forestgreen?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/atlas/database)
-[![AI Engine](https://img.shields.io/badge/AI%20Assistant-Groq%20%7C%20Llama%203.3-orange?style=for-the-badge&logo=meta)](https://groq.com/)
-[![ML Model](https://img.shields.io/badge/ML%20Prediction-XGBoost%20%7C%20Python-red?style=for-the-badge&logo=python)](https://xgboost.readthedocs.io/)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
-
-> **AgriNexus** is a full-stack, AI-powered agricultural ecosystem designed to eliminate middlemen, empower local farmers, and connect them directly with buyers. The platform integrates machine learning for price prediction, Llama-based AI models for plant health diagnosis, interactive mapping for local listings, and specialized marketplaces for crops, nurseries, and aquaculture.
+*A full‑stack marketplace for crops, saplings, and fish with Stripe payment integration, AI‑powered image analysis, and Clerk authentication.*
 
 ---
 
-## 🗺️ System Overview
+## Table of Contents
 
-```mermaid
-graph TD
-    User[Client / React App] -->|Authentication| Clerk[Clerk Auth]
-    User -->|API Requests| Express[Node.js / Express Backend]
-    Express -->|Read/Write| MongoDB[(MongoDB Atlas)]
-    Express -->|AI Queries| Groq[Groq Cloud API]
-    Groq -->|Chat| LlamaChat[Llama 3.3 70B]
-    Groq -->|Vision| LlamaVision[Llama 4 Vision]
-    
-    User -->|Price Prediction| MLServer[Python / Flask ML Backend]
-    MLServer -->|Load Model| XGBoost[XGBoost Classifier / Regressor]
-```
-
----
-
-## ✨ Features
-
-### 🛒 Multi-Category Marketplace
-*   **🌾 Crop Market:** Direct sales of agricultural produce with customized tags for variety, grade, and harvest date.
-*   **🐟 Aquaculture (Fish Market):** Real-time booking of seafood harvests, ownership-verified listings, and city-based geolocation filters.
-*   **🌱 Nursery & Forestry Market:** High-quality saplings categorized by age and type, complete with farm coordinates for easy pickup.
-
-### 🤖 AgriNexus AI Assistant (Groq Cloud)
-*   **Context-Aware Chat:** Built on Llama 3.3 70B for lightning-fast agricultural guidance.
-*   **Image Analysis:** Leverages Llama 4 Vision to analyze uploaded plant images and diagnose crop diseases, offering organic and chemical remediation steps.
-*   **Ubiquitous Interface:** Accessible globally across the app via a floating conversation modal.
-
-### 📊 Machine Learning Price Prediction
-*   **Data-Driven Decisions:** Powered by XGBoost models trained on over **200,000 records** of regional agricultural prices.
-*   **Outputs:** Predicts the Minimum, Maximum, and Modal price for target crops to prevent underpricing.
-
-### 🚜 Equipment Certification & Rental
-*   **Trusted Directory:** Farmers can submit certified requests for machinery and equipment rentals, creating a safe, decentralized utility pool.
-
-### 🗺️ Interactive GIS Mapping
-*   **Zero Cost Integration:** Built using OpenStreetMap and Leaflet JS to map nearby listings without expensive Google Maps API key requirements.
-
-### 📚 Government Portal & Educational Suite
-*   **Govt Schemes:** Direct access and instructions for schemes like PM-KISAN, PMFBY, and RKVY.
-*   **Agri-Education:** Curated links and metadata to courses from FAO, edX, Coursera, and Swayam.
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Prerequisites](#prerequisites)
+- [Setup & Installation](#setup--installation)
+- [Environment Variables](#environment-variables)
+- [Running the App](#running-the-app)
+- [Stripe Integration](#stripe-integration)
+- [API Endpoints](#api-endpoints)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
 ---
 
-## 💻 Tech Stack
+## Features
 
-| Domain | Technology | Usage |
-| :--- | :--- | :--- |
-| **Frontend** | React.js (Vite), Framer Motion, Recharts, Leaflet | Client SPA, UI/UX Animations, Analytics, OSM Mapping |
-| **Authentication** | Clerk Auth | Role-based authentication (Farmer/Buyer) |
-| **Backend** | Node.js, Express.js | Core API gateway, DB routing, and AI middleware |
-| **ML Service** | Python, Flask, Joblib, Scikit-learn, XGBoost | Crop valuation and prediction services |
-| **Database** | MongoDB Atlas, Mongoose | Schema definitions for Users, Crops, Fish, Saplings, and Orders |
-| **AI Integration** | OpenAI SDK (via Groq Engine) | Llama 3.3 & Llama 4 Vision integrations |
-
----
-
-## 📂 Repository Structure
-
-```
-AgriNexus/
-├── backend/                # Node.js/Express Server
-│   ├── models/             # Mongoose schemas (Crops, Fish, Saplings, etc.)
-│   ├── routers/            # Express routers (User, Farmer, Buyer, Nursery, Fish)
-│   └── index.js            # Express Entrypoint
-├── frontend/               # React Single Page App
-│   ├── src/
-│   │   ├── components/     # Reusable UI widgets & Navbar
-│   │   ├── pages/          # Crop, Fish, and Nursery Markets, Profile, and Settings
-│   │   └── App.jsx         # Client routing configuration
-├── model-backend/          # Python/Flask Machine Learning Server
-│   ├── models/             # Pre-trained .joblib XGBoost models
-│   ├── server.py           # Prediction API Server
-│   └── requirements.txt    # Python dependencies
-└── README.md
-```
+- **Marketplace** for three product types: crops, saplings, fish
+- **User roles** – Farmer, Buyer, Clerk (authentication via Clerk)
+- **Stripe Checkout** – secure payment flow with session metadata
+- **AI Assistant** – plant disease detection & chat (Groq/Llama)
+- **Map integration** – view locations via Leaflet/OpenStreetMap
+- **Internationalisation** – English & Kannada support
+- **Responsive UI** – modern design with framer‑motion animations
+- **Full CRUD** for all resources (orders, products, equipment, certifications)
 
 ---
 
-## 🛠️ Installation & Setup
+## Tech Stack
 
-### 1. Clone the Repository
+| Layer | Technology |
+|------|------------|
+| Frontend | Vite + React, Tailwind‑css (custom), Framer Motion, React‑Router, Clerk, i18next |
+| Backend | Node.js, Express, Mongoose (MongoDB), Stripe SDK, dotenv |
+| AI | Groq (Llama‑3.3) via OpenAI compatible client |
+| Database | MongoDB (local or Atlas) |
+| CI/CD | (optional) GitHub Actions – see `/.github/workflows` |
+
+---
+
+## Prerequisites
+
+- **Node.js** `>=20`
+- **npm** or **yarn**
+- **MongoDB** (local instance or Atlas connection string)
+- **Clerk** account (for authentication)
+- **Stripe** account (test keys)
+
+---
+
+## Setup & Installation
+
 ```bash
+# clone the repo
 git clone https://github.com/ayanhakeem/AgriNexus.git
 cd AgriNexus
+
+# install dependencies (backend & frontend)
+cd backend && npm install && cd ..
+cd frontend && npm install && cd ..
 ```
 
-### 2. Backend Configuration
-1. Navigate to the backend directory and install dependencies:
-   ```bash
-   cd backend
-   npm install
-   ```
-2. Create a `.env` file in the `backend` folder:
-   ```env
-   PORT=8080
-   MONGO_URI=your_mongodb_connection_string
-   CLERK_API_KEY=your_clerk_secret_key
-   GROK_API_KEY=your_groq_api_key
-   ```
-3. Start the server:
-   ```bash
-   node index.js
-   ```
-
-### 3. Frontend Configuration
-1. Navigate to the frontend directory and install dependencies:
-   ```bash
-   cd ../frontend
-   npm install
-   ```
-2. Create a `.env` file in the `frontend` folder:
-   ```env
-   VITE_BACKEND_URL=http://localhost:8080
-   VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
-   ```
-3. Run the development build:
-   ```bash
-   npm run dev
-   ```
-
-### 4. Machine Learning Backend Configuration
-1. Navigate to the model-backend directory:
-   ```bash
-   cd ../model-backend
-   ```
-2. Set up your virtual environment and install requirements:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use: venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
-3. Start the Flask prediction server:
-   ```bash
-   python server.py
-   ```
-   > **Note:** Pre-trained models (`xgboost_model_*.joblib`) are automatically bundled inside the `model-backend/models/` folder.
+Create a `.env` file in both `backend` and `frontend` (they are ignored by Git). See the **Environment Variables** section below.
 
 ---
 
-## 📡 Key API Reference
+## Environment Variables
 
-### 🌾 Crop Management
-*   `GET /api/farmer/allCrops` — Retrieve all available crops.
-*   `POST /api/farmer/addCrop` — Publish a new crop listing.
+### Backend (`backend/.env`)
+```
+# Server
+PORT=8080
+MONGODB_URI=mongodb://localhost:27017/agriNexus
 
-### 🐟 Aquaculture Marketplace
-*   `GET /api/fish/all` — Fetch all fish listings.
-*   `GET /api/fish/search?city=CityName` — Filter fish listings by city.
-*   `POST /api/fish/add` — Add a new aquaculture listing.
-*   `DELETE /api/fish/:fishId` — Remove aquaculture listing (Authorization: Creator or Admin).
+# Clerk (replace with your keys)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
 
-### 🌱 Nursery & Forestry
-*   `GET /api/nursery/all` — Retrieve all nursery listings.
-*   `GET /api/nursery/search?city=CityName` — Filter nursery listings by location.
-*   `POST /api/nursery/add` — List a new sapling.
+# Stripe (test mode)
+# STRIPE_SECRET_KEY=YOUR_STRIPE_SECRET_KEY (add your test secret key here)
+# STRIPE_PUBLISHABLE_KEY=YOUR_STRIPE_PUBLISHABLE_KEY (add your publishable key here)
+```
 
-### 🤖 AI Engine
-*   `POST /api/gemini/chat` — Conversational agricultural chat helper.
-*   `POST /api/gemini/analyze-image` — Disease classification from image attachments.
+### Frontend (`frontend/.env`)
+```
+VITE_BACKEND_URL=http://localhost:8080
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+```
 
----
-
-## 🤝 Contributing
-
-We welcome contributions to expand features, improve UI/UX, or optimize our ML model predictions.
-
-1. Fork the repo.
-2. Create a feature branch: `git checkout -b feature/AmazingFeature`
-3. Commit your changes: `git commit -m 'Add AmazingFeature'`
-4. Push to the branch: `git push origin feature/AmazingFeature`
-5. Open a Pull Request.
+> **Important:** `.env` files are listed in `.gitignore` and will never be committed.
 
 ---
 
-## 📄 License
+## Running the App
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more details.
+```bash
+# start MongoDB (if using local)
+# e.g., mongod --dbpath ./data
+
+# backend
+tcd backend && npm run dev   # runs on http://localhost:8080
+
+# frontend (in a separate terminal)
+cd frontend && npm run dev    # runs on http://localhost:5173
+```
+
+Open `http://localhost:5173` in your browser. You should see the landing page, and you can register/login via Clerk.
+
+---
+
+## Stripe Integration
+
+1. Open your Stripe dashboard → **Developers → API Keys** → copy the **test secret key**.
+2. Paste it into `backend/.env` as `STRIPE_SECRET_KEY`.
+3. The checkout flow is triggered by `placeOrder.js`. After payment, users are redirected to:
+   - `/payment-success?session_id=...` (shows order confirmation)
+   - `/payment-cancelled` (cancellation screen)
+4. Use Stripe test cards, e.g. `4242 4242 4242 4242`.
+
+---
+
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/buyer/create-checkout-session` | Create Stripe Checkout session (includes buyer & farmer IDs) |
+| `GET`  | `/api/buyer/orders/confirm-payment` | Verify payment & persist order |
+| `POST` | `/api/farmer/:clerkId/crops/add` | Add a new crop |
+| `GET`  | `/api/farmer/:clerkId/crops` | List farmer’s crops |
+| `PUT`  | `/api/farmer/:clerkId/crops/:cropId` | Update crop |
+| `DELETE`| `/api/farmer/:clerkId/crops/:cropId` | Delete crop |
+| … | (similar routes for saplings, fish, equipment, etc.) |
+
+---
+
+## Testing
+
+```bash
+# backend tests (if any)
+cd backend && npm test
+
+# frontend component tests (if using vitest/jest)
+cd frontend && npm run test
+```
+
+---
+
+## Deployment
+
+- **Backend** – Deploy to Render, Railway, or any Node‑compatible platform. Remember to set the same env variables in the service dashboard.
+- **Frontend** – Build with `npm run build` and host on Vercel, Netlify, or GitHub Pages (static site). The build outputs to `frontend/dist`.
+
+---
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/awesome-feature`).
+3. Commit your changes with clear messages.
+4. Push and open a Pull Request.
+5. Ensure you **do not** expose any secrets – `.env` files are ignored.
+
+---
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+*Happy coding! 🚜🌱🐟*
