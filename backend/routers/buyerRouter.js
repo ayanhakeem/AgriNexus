@@ -5,7 +5,14 @@ import Crop from "../models/cropModel.js";
 import Stripe from "stripe";
 
 const buyerRouter = express.Router();
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// Lazy-initialize Stripe so a missing env var doesn't crash the server on boot
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not set in environment variables");
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+};
 
 // 1. Add buyer (create account)
 buyerRouter.post("/add", async (req, res) => {
@@ -101,6 +108,7 @@ buyerRouter.post("/create-checkout-session", async (req, res) => {
     if (imageUrl) {
       lineItem.price_data.product_data.images = [imageUrl];
     }
+    const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [lineItem],
@@ -141,6 +149,7 @@ buyerRouter.post("/orders/confirm-payment", async (req, res) => {
     }
 
     // Retrieve Stripe Session
+    const stripe = getStripe();
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     if (session.payment_status !== "paid") {
       return res.status(400).json({ error: "Payment not completed" });
