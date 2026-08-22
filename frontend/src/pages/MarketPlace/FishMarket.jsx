@@ -291,7 +291,7 @@ const FishMarket = () => {
                                 toast.warning("You are the owner of this fish listing.");
                                 return;
                               }
-                              placeOrder(user.id, selectedFish.farmerClerkId, selectedFish, setSelectedFish);
+                              placeOrder(user.id, selectedFish.farmerClerkId, selectedFish, setSelectedFish, "fish");
                             } else {
                               toast.error("Please login to proceed");
                             }

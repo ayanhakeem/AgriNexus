@@ -92,39 +92,61 @@ buyerRouter.post("/create-checkout-session", async (req, res) => {
       return res.status(400).json({ error: "Invalid item price" });
     }
 
+    // Build product description based on itemType
+    let description = "Direct purchase from farmer.";
+    if (itemType === "sapling") {
+      description = `${item.type || "Sapling"} from ${item.nurseryName || "nursery"}. Age: ${item.age || "N/A"}.`;
+    } else if (itemType === "fish") {
+      const harvestStr = item.harvestDate ? new Date(item.harvestDate).toLocaleDateString() : "N/A";
+      description = `Fresh fish. Harvest date: ${harvestStr}. Status: ${item.status || "available"}.`;
+    } else {
+      description = `${item.variety || "Crop"} — ${item.quantity || 1}kg available.`;
+    }
+
     // Create Checkout Session
+    // NOTE: Stripe metadata values have a 500-character limit.
+    // We store only essential fields individually (NOT a full JSON blob of the item).
     const lineItem = {
       price_data: {
         currency: "inr",
         product_data: {
           name: `${name} (${itemType.toUpperCase()})`,
-          description: `Direct purchase from farmer.`,
+          description: description.substring(0, 300),
         },
         unit_amount: Math.round(price * 100),
       },
       quantity: quantity,
     };
 
-    if (imageUrl) {
+    // Stripe only accepts plain HTTPS URLs ≤ 2048 chars for images.
+    // Base64 data URIs (data:image/...) and overly-long URLs must be excluded.
+    const isStripeCompatibleImage =
+      imageUrl &&
+      (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) &&
+      !imageUrl.startsWith("data:") &&
+      imageUrl.length <= 2048;
+
+    if (isStripeCompatibleImage) {
       lineItem.price_data.product_data.images = [imageUrl];
     }
+
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [lineItem],
       mode: "payment",
       metadata: {
-        buyerClerkId,
-        farmerClerkId: farmerId,
-        itemType,
-        itemId: item._id || "",
-        itemDetails: JSON.stringify({
-          ...item,
-          farmerClerkId: farmerId,
-        }),
+        buyerClerkId: buyerClerkId.substring(0, 499),
+        farmerClerkId: farmerId.substring(0, 499),
+        itemType: itemType.substring(0, 50),
+        itemId: (item._id || "").toString().substring(0, 499),
+        itemName: name.substring(0, 200),
+        itemPrice: String(price),
+        itemQuantity: String(quantity),
+        itemLocation: (item.location || "").substring(0, 200),
       },
-      success_url: `${req.headers.origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${req.headers.origin}/payment-cancelled`,
+      success_url: `${req.headers.origin || process.env.FRONTEND_URL || "http://localhost:5173"}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${req.headers.origin || process.env.FRONTEND_URL || "http://localhost:5173"}/payment-cancelled`,
     });
 
     res.status(200).json({ url: session.url });
@@ -142,7 +164,7 @@ buyerRouter.post("/orders/confirm-payment", async (req, res) => {
       return res.status(400).json({ error: "Session ID is required" });
     }
 
-    // Check if order already processed
+    // Check if order already processed (idempotency)
     let existingOrder = await Order.findOne({ paymentId: sessionId });
     if (existingOrder) {
       return res.status(200).json({ message: "Order already processed", order: existingOrder });
@@ -155,14 +177,32 @@ buyerRouter.post("/orders/confirm-payment", async (req, res) => {
       return res.status(400).json({ error: "Payment not completed" });
     }
 
-    // Extract metadata
-    const { buyerClerkId, farmerClerkId, itemType, itemId, itemDetails: itemDetailsStr } = session.metadata;
-    const itemDetails = JSON.parse(itemDetailsStr);
+    // Extract metadata (stored as individual fields — no JSON blob)
+    const {
+      buyerClerkId,
+      farmerClerkId,
+      itemType,
+      itemId,
+      itemName,
+      itemPrice,
+      itemQuantity,
+      itemLocation,
+    } = session.metadata;
 
     const buyer = await Buyer.findOne({ clerkId: buyerClerkId });
     if (!buyer) {
       return res.status(404).json({ error: "Buyer not found" });
     }
+
+    // Build a summary object from metadata for the order record
+    const itemSummary = {
+      _id: itemId,
+      name: itemName,
+      price: Number(itemPrice),
+      quantity: Number(itemQuantity),
+      location: itemLocation,
+      farmerClerkId,
+    };
 
     const orderData = {
       buyerClerkId,
@@ -173,11 +213,11 @@ buyerRouter.post("/orders/confirm-payment", async (req, res) => {
     };
 
     if (itemType === "crop") {
-      orderData.crop = itemDetails;
+      orderData.crop = itemSummary;
     } else if (itemType === "sapling") {
-      orderData.sapling = itemDetails;
+      orderData.sapling = itemSummary;
     } else if (itemType === "fish") {
-      orderData.fish = itemDetails;
+      orderData.fish = itemSummary;
     }
 
     const order = new Order(orderData);

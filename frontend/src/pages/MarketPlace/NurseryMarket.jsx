@@ -269,9 +269,7 @@ const NurseryMarket = () => {
                                 toast.warning("You are the owner of this nursery.");
                                 return;
                               }
-                              // Wrap sapling for placeOrder
-                              const saplingToOrder = { ...selectedSapling, type: 'sapling' };
-                              placeOrder(user.id, selectedSapling.farmerClerkId, saplingToOrder, setSelectedSapling);
+                              placeOrder(user.id, selectedSapling.farmerClerkId, selectedSapling, setSelectedSapling, "sapling");
                             } else {
                               toast.error("Please login to buy saplings");
                             }
