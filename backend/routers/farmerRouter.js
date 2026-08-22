@@ -2,6 +2,7 @@ import express from "express";
 import Farmer from "../models/farmerModel.js";
 import Crop from "../models/cropModel.js";
 import Order from "../models/orderModel.js";
+import { translateArray } from "../utils/translateData.js";
 
 const farmerRouter = express.Router();
 
@@ -158,13 +159,16 @@ farmerRouter.put("/:clerkId/orders/:orderId/status", async (req, res) => {
 // 8. Fetch all crops from all farmers
 farmerRouter.get("/crops/all", async (req, res) => {
   try {
+    const lang = req.query.lang || "en";
     const crops = await Crop.find({}).lean();
     // Ensure all crops have an image field (for backward compatibility)
     const cropsWithImage = crops.map(crop => ({
       ...crop,
       image: crop.image || null
     }));
-    res.json(cropsWithImage);
+    
+    const translatedCrops = await translateArray(cropsWithImage, lang);
+    res.json(translatedCrops);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

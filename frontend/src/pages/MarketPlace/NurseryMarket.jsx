@@ -7,6 +7,7 @@ import { useUser } from "@clerk/clerk-react";
 import { toast } from "react-toastify";
 import placeOrder from "./placeOrder";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -32,19 +33,21 @@ const NurseryMarket = () => {
   const [loading, setLoading] = useState(true);
   const [searchCity, setSearchCity] = useState("");
   const [selectedSapling, setSelectedSapling] = useState(null);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     fetchSaplings();
-  }, []);
+  }, [i18n.language]);
 
   const fetchSaplings = async (city = "") => {
     setLoading(true);
     try {
       const url = city 
-        ? `${backendUrl}/api/nursery/search?city=${city}` 
-        : `${backendUrl}/api/nursery/all`;
+        ? `${backendUrl}/api/nursery/search?city=${city}&lang=${i18n.language}` 
+        : `${backendUrl}/api/nursery/all?lang=${i18n.language}`;
       const response = await axios.get(url);
-      setSaplings(response.data);
+      const data = Array.isArray(response.data) ? response.data : [];
+      setSaplings(data);
     } catch (error) {
       console.error("Error fetching saplings:", error);
     } finally {

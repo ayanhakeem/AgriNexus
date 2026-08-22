@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import placeOrder from "./placeOrder";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -48,12 +49,13 @@ export default function ModernMarketplace() {
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const { user } = useUser();
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const fetchCrops = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(backendUrl + `/api/farmer/crops/all`);
+        const response = await axios.get(backendUrl + `/api/farmer/crops/all?lang=${i18n.language}`);
         const allCrops = Array.isArray(response.data) ? response.data : [];
         setCrops(allCrops);
       } catch (error) {
@@ -64,10 +66,10 @@ export default function ModernMarketplace() {
       }
     };
     fetchCrops();
-  }, []);
+  }, [i18n.language]);
 
   const fetchCropImage = async (cropID, cropName) => {
-    if (cropImages[cropID]) return;
+    if (cropImages[cropID] !== undefined) return;
     try {
       const response = await axios.get(
         `https://api.unsplash.com/search/photos`,
@@ -100,6 +102,7 @@ export default function ModernMarketplace() {
     const search = searchTerm.toLowerCase();
     return (
       (crop.name && typeof crop.name === 'string' && crop.name.toLowerCase().includes(search)) ||
+      (crop.originalName && typeof crop.originalName === 'string' && crop.originalName.toLowerCase().includes(search)) ||
       (crop.variety && typeof crop.variety === 'string' && crop.variety.toLowerCase().includes(search)) ||
       (crop.location && typeof crop.location === 'string' && crop.location.toLowerCase().includes(search))
     );
@@ -177,9 +180,9 @@ export default function ModernMarketplace() {
     useEffect(() => {
       // Fetch Unsplash image if no farmer image
       if (!crop.image) {
-        fetchCropImage(crop._id, crop.name);
+        fetchCropImage(crop._id, crop.originalName || crop.name);
       }
-    }, [crop._id, crop.name, crop.image]);
+    }, [crop._id, crop.name, crop.originalName, crop.image]);
 
     return (
       <MotionCard

@@ -1,5 +1,6 @@
 import express from "express";
 import Fish from "../models/Fish.js";
+import { translateArray } from "../utils/translateData.js";
 
 const fishRouter = express.Router();
 
@@ -30,8 +31,10 @@ fishRouter.post("/add", async (req, res) => {
 // 2. Fetch all fish (Marketplace)
 fishRouter.get("/all", async (req, res) => {
   try {
+    const lang = req.query.lang || "en";
     const fishList = await Fish.find({}).sort({ createdAt: -1 }).lean();
-    res.json(fishList);
+    const translatedFish = await translateArray(fishList, lang);
+    res.json(translatedFish);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -40,14 +43,15 @@ fishRouter.get("/all", async (req, res) => {
 // 2.5 Search fish by city
 fishRouter.get("/search", async (req, res) => {
   try {
-    const { city } = req.query;
+    const { city, lang = "en" } = req.query;
     if (!city) return res.status(400).json({ error: "City query is required" });
     
     const fishList = await Fish.find({
       location: { $regex: city, $options: "i" }
     }).sort({ createdAt: -1 }).lean();
     
-    res.json(fishList);
+    const translatedFish = await translateArray(fishList, lang);
+    res.json(translatedFish);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

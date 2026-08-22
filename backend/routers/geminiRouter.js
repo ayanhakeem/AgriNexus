@@ -41,7 +41,7 @@ geminiRouter.post(
       const base64Image = Buffer.from(file.buffer).toString("base64");
 
       const response = await groq.chat.completions.create({
-        model: "meta-llama/llama-4-scout-17b-16e-instruct",
+        model: "qwen/qwen3.6-27b",
         messages: [
           {
             role: "user",
@@ -89,7 +89,7 @@ geminiRouter.post("/chat", async (req, res) => {
     }));
 
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-120b",
       messages: [
         { 
             role: "system", 

@@ -7,6 +7,7 @@ import { useUser } from "@clerk/clerk-react";
 import { toast } from "react-toastify";
 import placeOrder from "./placeOrder";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -32,19 +33,21 @@ const FishMarket = () => {
   const [loading, setLoading] = useState(true);
   const [searchCity, setSearchCity] = useState("");
   const [selectedFish, setSelectedFish] = useState(null);
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     fetchFish();
-  }, []);
+  }, [i18n.language]);
 
   const fetchFish = async (city = "") => {
     setLoading(true);
     try {
       const url = city 
-        ? `${backendUrl}/api/fish/search?city=${city}`
-        : `${backendUrl}/api/fish/all`;
+        ? `${backendUrl}/api/fish/search?city=${city}&lang=${i18n.language}`
+        : `${backendUrl}/api/fish/all?lang=${i18n.language}`;
       const response = await axios.get(url);
-      setFishList(response.data);
+      const data = Array.isArray(response.data) ? response.data : [];
+      setFishList(data);
     } catch (error) {
       console.error("Error fetching fish:", error);
     } finally {
@@ -183,7 +186,7 @@ const FishMarket = () => {
                           <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center text-orange-600">
                             <FontAwesomeIcon icon={faCalendarAlt} />
                           </div>
-                          <span className="font-medium">Harvest: {new Date(fish.harvestDate).toLocaleDateString()}</span>
+                          <span className="font-medium">Harvest: {new Date(fish.harvestDate).toLocaleDateString(i18n.language === 'kn' ? 'kn-IN' : 'en-US')}</span>
                         </div>
                       )}
                     </div>

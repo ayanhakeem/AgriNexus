@@ -1,6 +1,7 @@
 import express from "express";
 import Sapling from "../models/Sapling.js";
 import Farmer from "../models/farmerModel.js";
+import { translateArray } from "../utils/translateData.js";
 
 const nurseryRouter = express.Router();
 
@@ -37,8 +38,10 @@ nurseryRouter.post("/add", async (req, res) => {
 // 2. Fetch all saplings (Marketplace)
 nurseryRouter.get("/all", async (req, res) => {
   try {
+    const lang = req.query.lang || "en";
     const saplings = await Sapling.find({}).sort({ createdAt: -1 }).lean();
-    res.json(saplings);
+    const translatedSaplings = await translateArray(saplings, lang);
+    res.json(translatedSaplings);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -47,10 +50,11 @@ nurseryRouter.get("/all", async (req, res) => {
 // 3. Fetch saplings by location (Nearby search)
 nurseryRouter.get("/search", async (req, res) => {
   try {
-    const { city } = req.query;
+    const { city, lang = "en" } = req.query;
     const query = city ? { location: new RegExp(city, 'i') } : {};
     const saplings = await Sapling.find(query).lean();
-    res.json(saplings);
+    const translatedSaplings = await translateArray(saplings, lang);
+    res.json(translatedSaplings);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

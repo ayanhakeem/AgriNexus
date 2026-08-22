@@ -53,8 +53,8 @@ const Navbar = () => {
   const [langDropdownOpen, setLangDropdownOpen] = useState(false);
 
   const getUsername = (email) => {
-    if (!email) return "User";
-    return email.split("@")[0];
+    if (!email) return "U";
+    return email.charAt(0).toUpperCase();
   };
 
   const navItems = [
@@ -259,7 +259,7 @@ const Navbar = () => {
                   <UserButton />
                   <span className="font-medium text-sm hidden xl:inline">
                     {user
-                      ? getUsername(user.primaryEmailAddress.emailAddress)
+                      ? getUsername(user?.primaryEmailAddress?.emailAddress)
                       : "User"}
                   </span>
                   <motion.span
