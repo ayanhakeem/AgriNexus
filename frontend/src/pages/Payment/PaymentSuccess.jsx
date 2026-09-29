@@ -105,29 +105,52 @@ export default function PaymentSuccess() {
                 <p className="text-[#606C38] mt-2">Thank you for your purchase. Your order has been placed successfully.</p>
               </div>
 
-              {order && (
-                <div className="bg-[#FEFAE0]/40 rounded-xl p-5 border border-[#DDA15E]/10 text-left space-y-3">
-                  <h3 className="font-bold text-[#283618] border-b border-[#DDA15E]/20 pb-2">Order Summary</h3>
-                  <div className="flex justify-between text-sm text-[#606C38]">
-                    <span>Transaction ID:</span>
-                    <span className="font-mono text-xs max-w-[200px] truncate" title={order.paymentId}>
-                      {order.paymentId}
-                    </span>
+              {order && (() => {
+                const itemType = order.crop ? "crop" : order.sapling ? "sapling" : order.fish ? "fish" : null;
+                const item = order.crop || order.sapling || order.fish;
+                const typeLabel = itemType === "crop" ? "🌾 Crop" : itemType === "sapling" ? "🌿 Nursery Sapling" : itemType === "fish" ? "🐟 Aquaculture / Fish" : "Product";
+                return (
+                  <div className="bg-[#FEFAE0]/40 rounded-xl p-5 border border-[#DDA15E]/10 text-left space-y-3">
+                    <h3 className="font-bold text-[#283618] border-b border-[#DDA15E]/20 pb-2">Order Summary</h3>
+                    <div className="flex justify-between text-sm text-[#606C38]">
+                      <span>Transaction ID:</span>
+                      <span className="font-mono text-xs max-w-[200px] truncate" title={order.paymentId}>
+                        {order.paymentId}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm text-[#606C38]">
+                      <span>Status:</span>
+                      <span className="capitalize font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full text-xs">
+                        {order.status}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm text-[#606C38]">
+                      <span>Category:</span>
+                      <span className="font-semibold text-[#283618]">{typeLabel}</span>
+                    </div>
+                    <div className="flex justify-between text-sm text-[#606C38]">
+                      <span>Item:</span>
+                      <span className="font-semibold text-[#283618]">
+                        {item?.name || "Product"}
+                        {item?.variety ? ` — ${item.variety}` : ""}
+                        {item?.type ? ` (${item.type})` : ""}
+                      </span>
+                    </div>
+                    {item?.location && (
+                      <div className="flex justify-between text-sm text-[#606C38]">
+                        <span>Location:</span>
+                        <span className="font-semibold text-[#283618]">{item.location}</span>
+                      </div>
+                    )}
+                    {item?.price && (
+                      <div className="flex justify-between text-sm text-[#606C38]">
+                        <span>Price Paid:</span>
+                        <span className="font-bold text-[#BC6C25]">₹{Number(item.price).toLocaleString()}</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="flex justify-between text-sm text-[#606C38]">
-                    <span>Status:</span>
-                    <span className="capitalize font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full text-xs">
-                      {order.status}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm text-[#606C38]">
-                    <span>Item details:</span>
-                    <span className="font-semibold text-[#283618]">
-                      {order.crop?.name || order.sapling?.name || order.fish?.name || "Product"}
-                    </span>
-                  </div>
-                </div>
-              )}
+                );
+              })()}
 
               <div className="pt-4 flex flex-col sm:flex-row gap-3">
                 <button

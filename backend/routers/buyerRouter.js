@@ -144,6 +144,12 @@ buyerRouter.post("/create-checkout-session", async (req, res) => {
         itemPrice: String(price),
         itemQuantity: String(quantity),
         itemLocation: (item.location || "").substring(0, 200),
+        // Extra fields per type
+        itemVariety: (item.variety || "").substring(0, 200),
+        itemExtraType: (item.type || "").substring(0, 200),
+        itemNurseryName: (item.nurseryName || "").substring(0, 200),
+        itemAge: (item.age || "").toString().substring(0, 50),
+        itemStatus: (item.status || "").substring(0, 50),
       },
       success_url: `${req.headers.origin || process.env.FRONTEND_URL || "http://localhost:5173"}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${req.headers.origin || process.env.FRONTEND_URL || "http://localhost:5173"}/payment-cancelled`,
@@ -202,6 +208,12 @@ buyerRouter.post("/orders/confirm-payment", async (req, res) => {
       quantity: Number(itemQuantity),
       location: itemLocation,
       farmerClerkId,
+      // Include type-specific fields from metadata
+      ...(session.metadata.itemVariety   && { variety: session.metadata.itemVariety }),
+      ...(session.metadata.itemExtraType && { type: session.metadata.itemExtraType }),
+      ...(session.metadata.itemNurseryName && { nurseryName: session.metadata.itemNurseryName }),
+      ...(session.metadata.itemAge       && { age: session.metadata.itemAge }),
+      ...(session.metadata.itemStatus    && { status: session.metadata.itemStatus }),
     };
 
     const orderData = {

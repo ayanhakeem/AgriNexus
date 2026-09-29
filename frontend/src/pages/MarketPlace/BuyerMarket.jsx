@@ -12,6 +12,7 @@ import {
   faShoppingBasket,
   faFilter,
   faSort,
+  faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import placeOrder from "./placeOrder";
@@ -236,16 +237,27 @@ export default function ModernMarketplace() {
             </div>
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between mt-auto pt-4 border-t border-[#DDA15E]/10">
             <p className="text-2xl font-bold text-[#BC6C25]">₹{crop.price}</p>
-            <motion.button
-              whileHover={{ scale: 1.05, backgroundColor: "#283618" }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedCrop(crop)}
-              className="px-4 py-2 bg-[#606C38] text-[#FEFAE0] rounded-lg font-medium transition-colors shadow-sm"
-            >
-              View Details
-            </motion.button>
+            <div className="flex gap-2">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedCrop(crop)}
+                className="p-2.5 bg-[#606C38]/10 text-[#606C38] rounded-xl hover:bg-[#606C38]/20 transition-colors"
+                title="View Details"
+              >
+                <FontAwesomeIcon icon={faInfoCircle} />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05, backgroundColor: "#283618" }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedCrop(crop)}
+                className="px-5 py-2.5 bg-[#606C38] text-[#FEFAE0] rounded-xl font-bold transition-colors shadow-md active:scale-95"
+              >
+                Buy Now
+              </motion.button>
+            </div>
           </div>
         </div>
       </MotionCard>
